@@ -7,9 +7,15 @@ data:
     hazelcast:
       group:
         name: pnfs-community
+      properties:
+        hazelcast.discovery.enabled: false
+        hazelcast.phone.home.enabled: false
+
       network:
         join:
           multicast:
+            enabled: false
+          tcp-ip:
             enabled: true
         rest-api:
           enabled: true
@@ -36,29 +42,27 @@ metadata:
   name: hazelcast-service
 spec:
   selector:
-    app: hazelcast-service
+    app: hazelcast
   ports:
     - name: hazelcast
       port: 5701
-  type: LoadBalancer
+      targetPort: 5701
 ---
 
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: hazelcast
-  labels:
-    app.kubernetes.io/name: hazelcast
 spec:
-  replicas: 3
-  serviceName: hazelcast-service
   selector:
     matchLabels:
-      app.kubernetes.io/name: hazelcast
+      app: hazelcast
+  replicas: 1
+  serviceName: hazelcast-service
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: hazelcast
+        app: hazelcast
     spec:
       containers:
       - name: hazelcast
