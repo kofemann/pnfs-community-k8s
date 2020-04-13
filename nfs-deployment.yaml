@@ -1,4 +1,40 @@
 #
+# pNFS MDS service
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-mds
+spec:
+  selector:
+    app: nfs-mds
+  ports:
+    - name: mds
+      port: 2049
+---
+
+#
+# pNFS MDS exposed service
+#
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    name: nfs-mds
+  name: nfs-mds-endpoint
+subsets:
+- addresses:
+  - ip: 10.42.9.187
+    nodeName: gest-k8s-test2
+    targetRef:
+      kind: Pod
+      name: nfs-mds-0
+  ports:
+  - port: 2049
+    protocol: TCP
+---
+
+#
 # pNFS MDS server
 #
 apiVersion: apps/v1
@@ -43,18 +79,3 @@ spec:
       - name: nfs-storage
         configMap:
           name: nfs-configuration
-
-#
-# pNFS MDS service
-# 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nfs-mds
-spec:
-  selector:
-    app: nfs-mds
-  ports:
-    - name: mds
-      port: 2049
