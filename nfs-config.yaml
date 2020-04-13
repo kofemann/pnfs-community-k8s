@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nfs-configuration
+data:
+  nfs.properties: |-
+    nfs.domain=desy.afs
+
+    nfs.state.store=/pnfs/state
+
+    # state/lock/session lease time in sec.
+    nfs.lease.time=90
+
+    nfs.attribute-cache.time = 3
+    nfs.attribute-cache.unit = SECONDS
+    nfs.attribute-cache.size = 2048
+
+    nfs.readdir-cache.time = 10
+    nfs.readdir-cache.unit = MINUTES
+    nfs.readdir-cache.size = 8192
+
+  chimera.properties: |-
+    chimera.db.changeset=classpath:org/dcache/chimera/changelog/changelog-master.xml
+    chimera.db.driver=org.h2.Driver
+    chimera.db.url=jdbc:h2:/pnfs/db/chimera-db
+    chimera.db.user=sa
+    chimera.db.password=
+    chimera.db.pool.min=1
+    chimera.db.pool.max=8
+
+  exports: |-
+    / *(rw,no_root_squash)
+      

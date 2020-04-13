@@ -1,0 +1,60 @@
+#
+# pNFS MDS server
+#
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nfs-mds
+  labels:
+    app.kubernetes.io/name: nfs-mds
+spec:
+  replicas: 1
+  serviceName: pnfs-service
+  selector:
+    matchLabels:
+      app: nfs-mds
+  template:
+    metadata:
+      labels:
+        app: nfs-mds
+    spec:
+      containers:
+      - name: nfs-mds
+        image: docker.io/dcache/pnfs-community:latest
+        imagePullPolicy: Always
+        command:
+          - sh
+          - -c
+          - "/run.sh mds"
+        ports:
+        - name: nfs-mds
+          containerPort: 2049
+        volumeMounts:
+        - name: nfs-storage
+          mountPath: /pnfs/etc
+        env:
+        - name: ZOOKEEPER_CONNECT
+          value: zk-0.zk-hs:2181,zk-1.zk-hs:2181,zk-2.zk-hs:2181
+        - name: NFS_PORT
+          value: "2049"
+        - name: HAZELCAST_HOST
+          value: hazelcast-0.hazelcast-service
+      volumes:
+      - name: nfs-storage
+        configMap:
+          name: nfs-configuration
+
+#
+# pNFS MDS service
+# 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-mds
+spec:
+  selector:
+    app: nfs-mds
+  ports:
+    - name: mds
+      port: 2049
