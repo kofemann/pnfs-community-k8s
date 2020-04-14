@@ -1,0 +1,85 @@
+#
+# pNFS DS back-end service
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-ds-bep
+spec:
+  selector:
+    app: nfs-ds
+  ports:
+    - name: ds-bep
+      port: 2017
+  clusterIP: None
+---
+
+#
+# pNFS DS back-end service
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-ds
+spec:
+  selector:
+    app: nfs-ds
+  ports:
+    - name: ds
+      port: 2053
+---
+
+
+#
+# pNFS MDS server
+#
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nfs-ds
+  labels:
+    app.kubernetes.io/name: nfs-ds
+spec:
+  replicas: 3
+  serviceName: pnfs-service
+  selector:
+    matchLabels:
+      app: nfs-ds
+  template:
+    metadata:
+      labels:
+        app: nfs-ds
+    spec:
+      containers:
+      - name: nfs-ds
+        image: docker.io/dcache/pnfs-community:latest
+        imagePullPolicy: Always
+        command:
+          - sh
+          - -c
+          - "/run.sh ds"
+        ports:
+        - name: ds
+          containerPort: 2053
+        - name: ds-bep
+          containerPort: 2017
+        volumeMounts:
+        - name: nfs-ds-storage
+          mountPath: /pnfs/data
+        env:
+        - name: ZOOKEEPER_CONNECT
+          value: zk-0.zk-hs:2181,zk-1.zk-hs:2181,zk-2.zk-hs:2181
+        - name: NFS_PORT
+          value: "2053"
+        - name: BEP_PORT
+          value: "2017"
+        - name: HAZELCAST_HOST
+          value: hazelcast-0.hazelcast-service
+  volumeClaimTemplates:
+  - metadata:
+      name: nfs-ds-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
