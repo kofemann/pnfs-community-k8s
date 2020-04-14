@@ -16,22 +16,14 @@ spec:
 #
 # pNFS MDS exposed service
 #
-apiVersion: v1
-kind: Endpoints
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
 metadata:
-  labels:
-    name: nfs-mds
   name: nfs-mds-endpoint
-subsets:
-- addresses:
-  - ip: 10.42.9.187
-    nodeName: gest-k8s-test2
-    targetRef:
-      kind: Pod
-      name: nfs-mds-0
-  ports:
-  - port: 2049
-    protocol: TCP
+spec:
+  backend:
+    serviceName: nfs-mds
+    servicePort: 2049
 ---
 
 #
