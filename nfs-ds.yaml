@@ -63,6 +63,16 @@ spec:
           containerPort: 2053
         - name: ds-bep
           containerPort: 2017
+        readinessProbe:
+          tcpSocket:
+            port: 2053
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 2053
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
         volumeMounts:
         - name: nfs-ds-storage
           mountPath: /pnfs/data

@@ -57,6 +57,16 @@ spec:
         ports:
         - name: nfs-mds
           containerPort: 2049
+        readinessProbe:
+          tcpSocket:
+            port: 2049
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 2049
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
         volumeMounts:
         - name: nfs-storage
           mountPath: /pnfs/etc
