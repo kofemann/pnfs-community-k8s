@@ -79,13 +79,13 @@ spec:
           mountPath: /pnfs/data
         env:
         - name: ZOOKEEPER_CONNECT
-          value: zk-0.zk-hs:2181,zk-1.zk-hs:2181,zk-2.zk-hs:2181
+          value: zk-cs:2181
         - name: NFS_PORT
           value: "2053"
         - name: BEP_PORT
           value: "2017"
         - name: HAZELCAST_HOST
-          value: hazelcast-0.hazelcast-service
+          value: hazelcast-service
   volumeClaimTemplates:
   - metadata:
       name: nfs-ds-storage
