@@ -41,6 +41,7 @@ metadata:
     app.kubernetes.io/name: nfs-ds
 spec:
   replicas: 3
+  podManagementPolicy: "Parallel"
   serviceName: pnfs-service
   selector:
     matchLabels:
