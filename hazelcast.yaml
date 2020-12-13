@@ -4,24 +4,22 @@ metadata:
   name: hazelcast-configuration
 data:
   hazelcast.yaml: |-
-    hazelcast:
-      group:
-        name: pnfs-community
-      properties:
-        hazelcast.discovery.enabled: false
-        hazelcast.phone.home.enabled: false
+    cluster-name: pnfs-community
+    properties:
+      hazelcast.discovery.enabled: false
+      hazelcast.phone.home.enabled: false
 
-      network:
-        join:
-          multicast:
-            enabled: false
-          tcp-ip:
-            enabled: true
-        rest-api:
+    network:
+      join:
+        multicast:
+          enabled: false
+        tcp-ip:
           enabled: true
-          endpoint-groups:
-            HEALTH_CHECK:
-              enabled: true
+      rest-api:
+        enabled: true
+        endpoint-groups:
+          HEALTH_CHECK:
+            enabled: true
 
     cache:
       open-stateid:
